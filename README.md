@@ -123,16 +123,86 @@ Your app will be running at `http://localhost:4000`.
 
 ## 6. Deployment
 
-This project is configured for seamless deployment on **Netlify** using a Single Page Application (SPA) configuration.
+This project is configured for seamless deployment on **Netlify** using a Single Page Application (SPA) configuration. Follow these steps to deploy:
 
-### Deployment Steps:
-1. Push your code to a GitHub repository.
-2. Log into Netlify and select "Add new site" > "Import an existing project".
-3. Select your GitHub repository.
-4. Netlify will automatically detect the configuration from `netlify.toml`:
+### Step 1: Push Your Code to GitHub
+Ensure your code is pushed to a GitHub repository (private is recommended since your Supabase keys are in env vars).
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/ai-roadmap.git
+git branch -M main
+git push -u origin main
+```
+
+### Step 2: Deploy on Netlify
+1. Go to [app.netlify.com](https://app.netlify.com) and log in with GitHub.
+2. Click **"Add new site"** → **"Import an existing project"**.
+3. Select your `ai-roadmap` repository.
+4. Netlify will auto-detect the settings from your `netlify.toml`:
    - **Build command**: `npm run build`
    - **Publish directory**: `build/client`
-5. Go to "Advanced build settings" and add your `NEXT_PUBLIC_` environment variables.
-6. Click **Deploy**.
+5. Go to **"Advanced build settings"** and add your environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon key
+6. Click **"Deploy site"**.
 
-> **Note on OAuth:** Don't forget to add your new Netlify production URL to your Supabase Auth Redirect URLs!
+### Step 3: Update Supabase Auth Redirect URL
+After Netlify assigns your site URL (e.g., `https://your-site.netlify.app`):
+1. Go to your **Supabase Dashboard** → **Authentication** → **URL Configuration**.
+2. Add your Netlify URL to **Redirect URLs**:
+   ```text
+   https://your-site.netlify.app
+   https://your-site.netlify.app/**
+   ```
+
+---
+
+## 7. Adding Future Features (Continuous Deployment)
+
+Since Netlify is connected to your GitHub repo, every push to `main` will **auto-deploy**. Your workflow for new features:
+
+```bash
+# 1. Create a feature branch
+git checkout -b feature/my-new-feature
+
+# 2. Make your changes, then commit
+git add -A
+git commit -m "Add my new feature"
+
+# 3. Push to GitHub
+git push origin feature/my-new-feature
+
+# 4. Create a Pull Request and merge to main
+git checkout main
+git merge feature/my-new-feature
+git push origin main
+# → Netlify auto-deploys in ~30 seconds
+```
+
+> [!TIP]
+> Netlify creates **Deploy Previews** for every Pull Request. This lets you test changes on a temporary URL before merging to production.
+
+---
+
+## 8. Project Structure Recap
+
+```text
+ai-roadmap/
+├── netlify.toml          ← Netlify build config
+├── react-router.config.ts ← SPA mode (ssr: false)
+├── package.json          ← build script added
+├── .gitignore            ← env files, node_modules, build excluded
+├── src/                  ← Your app code
+└── supabase/             ← Database schema & seed data
+```
+
+---
+
+## 9. Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| **Blank page after deploy** | Check that env vars are set in Netlify dashboard |
+| **404 on page refresh** | The `[[redirects]]` in `netlify.toml` handles this (SPA fallback) |
+| **Google login not working** | Add your Netlify URL to Supabase Auth redirect URLs |
+| **Build fails** | Check Netlify build logs; ensure Node 22 is being used (`NODE_VERSION="22"`) |
+
