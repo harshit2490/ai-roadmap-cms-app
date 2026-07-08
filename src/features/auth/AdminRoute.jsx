@@ -15,7 +15,7 @@ export function AdminRoute({ children }) {
     );
   }
 
-  if (!user || !["admin", "staff"].includes(profile?.role)) {
+  if (!user || !profile) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#F9FAFB] px-4 text-center">
         <div className="max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
@@ -36,7 +36,7 @@ export function AdminRoute({ children }) {
           </div>
           <h1 className="mt-4 text-xl font-bold text-gray-900">Access Denied</h1>
           <p className="mt-2 text-sm text-gray-500 leading-relaxed">
-            You do not have administrative privileges to access this dashboard. If you believe this is an error, please check your user account configuration.
+            Please log in to access this page.
           </p>
           <div className="mt-6 flex flex-col gap-2">
             <Link

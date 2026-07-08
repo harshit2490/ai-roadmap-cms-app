@@ -70,7 +70,7 @@ function UserMenu() {
             </p>
           </div>
 
-          {["admin", "staff"].includes(profile?.role) && (
+          {["admin", "staff", "user"].includes(profile?.role) && (
             <Link
               to="/admin"
               onClick={() => setOpen(false)}
